@@ -16,7 +16,7 @@ def get_yellow_and_green (secret, guess, word_length):
             green += 1
     return green, yellow
 
-#Set up funtions for the different word lenght
+#Set up funtions for the different word length
 
 def game_three_letters():
     #Lists of words
@@ -428,27 +428,27 @@ def play_the_game():
     print("At anytime type 'hint' to get a hint about the word or 'exit' to quit the game.")
     print("Green means you have a correct letter on the correct place. Yellow means you have a correct letter, but in the wrong place.")
     print("Now, first things first, how many letters do you want the word to have?")
-    choose_the_word_lenght = int(input("You can choose any number between 3 and 9: "))
+    choose_the_word_length = int(input("You can choose any number between 3 and 9: "))
 
-    if choose_the_word_lenght == 3:
+    if choose_the_word_length == 3:
         game_three_letters()
     
-    elif choose_the_word_lenght == 4:
+    elif choose_the_word_length == 4:
         game_four_letters()
 
-    elif choose_the_word_lenght == 5:
+    elif choose_the_word_length == 5:
         game_five_letters()
 
-    elif choose_the_word_lenght == 6:
+    elif choose_the_word_length == 6:
         game_six_letters()
 
-    elif choose_the_word_lenght == 7:
+    elif choose_the_word_length == 7:
         game_seven_letters()
     
-    elif choose_the_word_lenght == 8:
+    elif choose_the_word_length == 8:
         game_eight_letters()
 
-    elif choose_the_word_lenght == 9:
+    elif choose_the_word_length == 9:
         game_nine_letters()
 
     else:

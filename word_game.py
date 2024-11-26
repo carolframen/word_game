@@ -45,11 +45,20 @@ def play_the_game():
         #Set up the hints
         if guess == "HINT":
             if secret in mass_effect:
-                print("The word is from Mass Effect.")
+                hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
+                hint_me = random.choice(hints_list_me)
+                print(f"Here's a tip about the universe the word is from: {hint_me}")
+
             elif secret in doctor_who:
-                print("The word is from Doctor Who.")
+                hints_list_dw = ["An ancient ship that’s bigger on the inside.","Adventures spanning time, space, and everything in between.","Enemies that shout 'Exterminate!' and never stop."]
+                hint_dw = random.choice(hints_list_dw)
+                print(f"Here's a tip about the universe the word is from: {hint_dw}")
+                
             elif secret in critical_role:
-                print("The word is from Critical Role or D&D.")
+                hints_list_cr = ["A game where imagination is your greatest weapon.","A party of misfits seeking treasure, glory, and sometimes survival.","Spells, swords, and subterfuge define the adventurers’ path."]
+                hint_cr = random.choice(hints_list_cr)
+                print(f"Here's a tip about the universe the word is from: {hint_cr}")
+
                 continue
         
         # Validate the guess

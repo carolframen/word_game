@@ -5,15 +5,27 @@ def get_yellow_and_green (secret, guess, word_length):
     yellow = 0
     green = 0
 
+    green_letters = []
+    yellow_letters = []
+
     #Check for yellow: correct digit, wrong place
     for i in range(word_length):
         if guess[i] != secret[i] and guess[i] in secret:
+            yellow_letters.append(guess[i])
             yellow += 1
+        else:
+            yellow_letters.append("_")
 
     #Check for green: correct digit, correct place
     for i in range(word_length):
         if guess[i] == secret[i]:
+            green_letters.append(guess[i])
             green += 1
+        else:
+            green_letters.append("_")
+    green_string = " ".join(green_letters)
+    yellow_string = " ".join(yellow_letters)
+    print(f"Green letters: {green_string}. Yellow letters: {yellow_string}.")
     return green, yellow
 
 #Set up funtions for the different word length
@@ -41,7 +53,7 @@ def game_three_letters():
             break
 
         #Set up the hints
-        if guess == "HINT":
+        elif guess == "HINT":
             if secret in mass_effect:
                 hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
                 hint_me = random.choice(hints_list_me)
@@ -57,23 +69,24 @@ def game_three_letters():
                 hint_cr = random.choice(hints_list_cr)
                 print(f"Here's a tip about the universe the word is from: {hint_cr}")
 
-                continue
-        
-        # Validate the guess
-        if len(guess) != 3 or not guess.isalpha():
-            print("Please enter a valid 3-digit word.")
             continue
         
-        guesses += 1
+        # Validate the guess
+        else:
+            if len(guess) != 3 or not guess.isalpha():
+                print("Please enter a valid 3-digit word.")
+                continue
         
-        # Get the yellow and green count
+            guesses += 1
+        
+        # Get the green count
         green, yellow = get_yellow_and_green(secret, guess,3)
         
-        print(f"Green: {green}, Yellow: {yellow}")
+        
         
         # Check if the guess is correct
         if green == 3:
-            print(f"Congratulations! You've guessed the number {secret} in {guesses} guesses.")
+            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
             break
 def game_four_letters():
     #Lists of words
@@ -98,7 +111,7 @@ def game_four_letters():
             break
 
         #Set up the hints
-        if guess == "HINT":
+        elif guess == "HINT":
             if secret in mass_effect:
                 hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
                 hint_me = random.choice(hints_list_me)
@@ -114,23 +127,24 @@ def game_four_letters():
                 hint_cr = random.choice(hints_list_cr)
                 print(f"Here's a tip about the universe the word is from: {hint_cr}")
 
-                continue
-        
-        # Validate the guess
-        if len(guess) != 4 or not guess.isalpha():
-            print("Please enter a valid 4-digit word.")
             continue
         
-        guesses += 1
+        # Validate the guess
+        else:
+            if len(guess) != 4 or not guess.isalpha():
+                print("Please enter a valid 4-digit word.")
+                continue
+        
+            guesses += 1
         
         # Get the yellow and green count
-        green, yellow = get_yellow_and_green(secret, guess,3)
+        green, yellow = get_yellow_and_green(secret, guess,4)
         
-        print(f"Green: {green}, Yellow: {yellow}")
+        
         
         # Check if the guess is correct
         if green == 4:
-            print(f"Congratulations! You've guessed the number {secret} in {guesses} guesses.")
+            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
             break
 def game_five_letters():
     #Lists of words
@@ -155,7 +169,7 @@ def game_five_letters():
             break
 
         #Set up the hints
-        if guess == "HINT":
+        elif guess == "HINT":
             if secret in mass_effect:
                 hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
                 hint_me = random.choice(hints_list_me)
@@ -171,23 +185,24 @@ def game_five_letters():
                 hint_cr = random.choice(hints_list_cr)
                 print(f"Here's a tip about the universe the word is from: {hint_cr}")
 
-                continue
-        
-        # Validate the guess
-        if len(guess) != 5 or not guess.isalpha():
-            print("Please enter a valid 5-digit word.")
             continue
         
-        guesses += 1
+        # Validate the guess
+        else:
+            if len(guess) != 5 or not guess.isalpha() and guess != "HINT":
+                print("Please enter a valid 5-digit word.")
+                continue
+            
+            guesses += 1
         
         # Get the yellow and green count
-        green, yellow = get_yellow_and_green(secret, guess,3)
+        green, yellow = get_yellow_and_green(secret, guess,5)
         
-        print(f"Green: {green}, Yellow: {yellow}")
+        
         
         # Check if the guess is correct
         if green == 5:
-            print(f"Congratulations! You've guessed the number {secret} in {guesses} guesses.")
+            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
             break
 def game_six_letters():
     #Lists of words
@@ -212,7 +227,7 @@ def game_six_letters():
             break
 
         #Set up the hints
-        if guess == "HINT":
+        elif guess == "HINT":
             if secret in mass_effect:
                 hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
                 hint_me = random.choice(hints_list_me)
@@ -228,23 +243,24 @@ def game_six_letters():
                 hint_cr = random.choice(hints_list_cr)
                 print(f"Here's a tip about the universe the word is from: {hint_cr}")
 
-                continue
-        
-        # Validate the guess
-        if len(guess) != 6 or not guess.isalpha():
-            print("Please enter a valid 6-digit word.")
             continue
         
-        guesses += 1
+        # Validate the guess
+        else:
+            if len(guess) != 6 or not guess.isalpha():
+                print("Please enter a valid 6-digit word.")
+                continue
+            
+            guesses += 1
         
         # Get the yellow and green count
         green, yellow = get_yellow_and_green(secret, guess,6)
         
-        print(f"Green: {green}, Yellow: {yellow}")
+        
         
         # Check if the guess is correct
         if green == 6:
-            print(f"Congratulations! You've guessed the number {secret} in {guesses} guesses.")
+            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
             break
 def game_seven_letters():
     #Lists of words
@@ -269,7 +285,7 @@ def game_seven_letters():
             break
 
         #Set up the hints
-        if guess == "HINT":
+        elif guess == "HINT":
             if secret in mass_effect:
                 hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
                 hint_me = random.choice(hints_list_me)
@@ -285,23 +301,24 @@ def game_seven_letters():
                 hint_cr = random.choice(hints_list_cr)
                 print(f"Here's a tip about the universe the word is from: {hint_cr}")
 
-                continue
-        
-        # Validate the guess
-        if len(guess) != 7 or not guess.isalpha():
-            print("Please enter a valid 7-digit word.")
             continue
         
-        guesses += 1
+        # Validate the guess
+        else:
+            if len(guess) != 7 or not guess.isalpha():
+                print("Please enter a valid 7-digit word.")
+                continue
+            
+            guesses += 1
         
         # Get the yellow and green count
-        green, yellow = get_yellow_and_green(secret, guess,3)
+        green, yellow = get_yellow_and_green(secret, guess,7)
         
-        print(f"Green: {green}, Yellow: {yellow}")
+        
         
         # Check if the guess is correct
         if green == 7:
-            print(f"Congratulations! You've guessed the number {secret} in {guesses} guesses.")
+            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
             break
 def game_eight_letters():
     #Lists of words
@@ -326,7 +343,7 @@ def game_eight_letters():
             break
 
         #Set up the hints
-        if guess == "HINT":
+        elif guess == "HINT":
             if secret in mass_effect:
                 hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
                 hint_me = random.choice(hints_list_me)
@@ -342,23 +359,24 @@ def game_eight_letters():
                 hint_cr = random.choice(hints_list_cr)
                 print(f"Here's a tip about the universe the word is from: {hint_cr}")
 
-                continue
-        
-        # Validate the guess
-        if len(guess) != 8 or not guess.isalpha():
-            print("Please enter a valid 8-digit word.")
             continue
         
-        guesses += 1
+        # Validate the guess
+        else:
+            if len(guess) != 8 or not guess.isalpha():
+                print("Please enter a valid 8-digit word.")
+                continue
+            
+            guesses += 1
         
         # Get the yellow and green count
-        green, yellow = get_yellow_and_green(secret, guess,3)
+        green, yellow = get_yellow_and_green(secret, guess,8)
         
-        print(f"Green: {green}, Yellow: {yellow}")
+        
         
         # Check if the guess is correct
         if green == 8:
-            print(f"Congratulations! You've guessed the number {secret} in {guesses} guesses.")
+            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
             break
 def game_nine_letters():
     #Lists of words
@@ -383,7 +401,7 @@ def game_nine_letters():
             break
 
         #Set up the hints
-        if guess == "HINT":
+        elif guess == "HINT":
             if secret in mass_effect:
                 hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
                 hint_me = random.choice(hints_list_me)
@@ -399,23 +417,23 @@ def game_nine_letters():
                 hint_cr = random.choice(hints_list_cr)
                 print(f"Here's a tip about the universe the word is from: {hint_cr}")
 
-                continue
-        
-        # Validate the guess
-        if len(guess) != 9 or not guess.isalpha():
-            print("Please enter a valid 9-digit word.")
             continue
         
-        guesses += 1
+        # Validate the guess
+        else:
+            if len(guess) != 9 or not guess.isalpha():
+                print("Please enter a valid 9-digit word.")
+                continue
+            
+            guesses += 1
         
-        # Get the yellow and green count
-        green, yellow = get_yellow_and_green(secret, guess,3)
+        # Get the green count
+        green, yellow = get_yellow_and_green(secret, guess,9)
         
-        print(f"Green: {green}, Yellow: {yellow}")
         
         # Check if the guess is correct
         if green == 9:
-            print(f"Congratulations! You've guessed the number {secret} in {guesses} guesses.")
+            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
             break
 
 

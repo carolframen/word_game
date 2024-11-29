@@ -128,7 +128,7 @@ def start_game():
         bg=dark_blue,
         wraplength=450,
     )
-    game_label_word_length.pack(pady=10)
+    game_label_word_length.grid(row=1, column=1, pady = 15)
 
     # Show progress
     progress_label = tk.Label(
@@ -138,7 +138,7 @@ def start_game():
         fg="green",
         bg=white,
     )
-    progress_label.pack(pady=10)
+    progress_label.grid(row=4, column=1, pady = 15)
 
     #Yellow letters label
     yellow_label = tk.Label(
@@ -149,7 +149,7 @@ def start_game():
     bg=dark_blue,
     wraplength=450,
     )
-    yellow_label.pack(pady=10)
+    yellow_label.grid(row=5, column=1, pady = 10)
 
     #This ensures that the enter key can be used to submit the guess
     guess_entry.focus_set()
@@ -209,19 +209,19 @@ def submit_guess():
 def play_again():
     congratulation_frame.pack_forget() #hide congratulation frame
     game_label_word_length.pack_forget()
-    progress_label.pack_forget()
-    yellow_label.pack_forget()
+    progress_label.grid_forget()
+    yellow_label.grid_forget()
 
     #Hint lists reset
-    if secret in mass_effect:
+    if not mass_effect:
         hints_list_me.append("Exploring worlds and battling foes from the helm of a stealthy spaceship.")
         hints_list_me.append("A story where choices ripple across a galaxy, shaping destinies and alliances.")
         hints_list_me.append("A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe.")
-    if secret in doctor_who:
+    if not doctor_who:
         hints_list_dw.append("An ancient ship that’s bigger on the inside.")
         hints_list_dw.append("Adventures spanning time, space, and everything in between.")
         hints_list_dw.append("Enemies that shout 'Exterminate!' and never stop.")
-    if secret in critical_role:
+    if not critical_role:
         hints_list_cr.append("A game where imagination is your greatest weapon.")
         hints_list_cr.append("A party of misfits seeking treasure, glory, and sometimes survival.")
         hints_list_cr.append("Spells, swords, and subterfuge define the adventurers’ path.")
@@ -230,8 +230,8 @@ def play_again():
 #Return to the main frame from the game frame
 def go_to_main_from_game(): 
     game_label_word_length.pack_forget()
-    progress_label.pack_forget()
-    yellow_label.pack_forget() 
+    progress_label.grid_forget()
+    yellow_label.grid_forget() 
     game_frame.pack_forget() #Hide game frame
     main_frame.pack(padx=20, pady=20) #Show the main frame
 
@@ -361,29 +361,33 @@ game_label_title = tk.Label(
     wraplength=450,
 
 )
-game_label_title.pack(pady=10)
+game_label_title.grid(row=0, column=1, pady = 15)
 
 
     #Guess Input
 guess_entry = tk.Entry(game_frame, font=("Arial", 16), width=20)
-guess_entry.pack(pady=10)
+guess_entry.grid(row=2, column=1, pady = 15)
 
     #Submit guess button
 guess_entry.bind("<Return>", lambda event: submit_guess()) #Submit with "enter"
 submit_button = tk.Button(game_frame, text="Submit", font=("Cooper Black", 14), bg=light_blue, command=submit_guess)
-submit_button.pack(pady=10)
+submit_button.grid(row=3, column=1, pady = 5)
 
     #Space where the feedback and hints will show
-feedback_label = tk.Label(game_frame, text="", font=("Arial", 14), fg=white, bg=dark_blue, wraplength=450, justify="left")
-feedback_label.pack(pady=10)
+feedback_label = tk.Label(game_frame, text=" ", font=("Arial", 14), fg=white, bg=dark_blue, wraplength=300, justify="center")
+feedback_label.grid(row=6, column=0, columnspan=3, rowspan=4, pady=10, sticky="ew")
 
     #Hint button
 hint_button = tk.Button(game_frame, text="Hint", font=("Cooper Black", 14), bg=light_blue, command=lambda: hints(secret))
-hint_button.pack(pady=10)
+hint_button.grid(row=12, column=0, pady=15, padx=5)
 
     #Back to main menu button
 back_to_main_button = tk.Button(game_frame, text="Main Menu", font=("Cooper Black", 14), bg=light_blue, command=go_to_main_from_game)
-back_to_main_button.pack(pady=10)
+back_to_main_button.grid(row=12, column=1, pady=15, padx=5)
+
+    #Quit button
+quit_from_game = tk.Button(game_frame, text="Quit", font=("Cooper Black", 14), bg=light_blue, command=quit)
+quit_from_game.grid(row=12, column=2, pady=15, padx=5)
 
 
 #Congratulation Frame Settings

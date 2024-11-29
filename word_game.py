@@ -1,4 +1,12 @@
 import random
+import tkinter as tk
+
+# Colors
+dark_blue = "#283044" #backgroung color
+light_blue = "#78a1bb" #button background
+white = "#ebf5ee"
+dark_bronw = "#8b786d"
+light_brown = "#bfa89e"
 
 #List of words
 
@@ -18,7 +26,7 @@ three_dw = ["AMY"]
 four_dw = ["ROSE","RORY","JACK","UNIT"]
 five_dw = ["SONIC","SKARO","DONNA","RIVER","CLARA"]
 six_dw = ["TARDIS", "DOCTOR", "DALEKS", "MARTHA", "JUDOON", "ZYGONS", "MASTER","VORTEX"]
-seven_dw = doctor_who = ["PARADOX","BADWOLF","TIMEWAR","WEEPING"]
+seven_dw = ["PARADOX","BADWOLF","TIMEWAR","WEEPING"]
 eight_dw = ["CYBERMEN","TIMELINE","TIMEWARP"]
 nine_dw = ["GALLIFREY","COMPANION","PANDORICA","CHAMELEON","TORCHWOOD"]
 
@@ -39,399 +47,389 @@ critical_role = three_cr + four_cr + five_cr + six_cr + seven_cr + eight_cr + ni
 word_list = mass_effect+doctor_who+critical_role
 
 
-
-
-#Set up yellow and green
-def get_yellow_and_green (secret, guess, word_length):
-    green = 0
-
-    green_letters = []
-    yellow_letters = []
-
-    #Check for yellow: correct digit, wrong place
-    for i in range(word_length):
-        if guess[i] != secret[i] and guess[i] in secret:
-            yellow_letters.append(guess[i])
-            
-        else:
-            yellow_letters.append("_")
-
-    #Check for green: correct digit, correct place
-    for i in range(word_length):
-        if guess[i] == secret[i]:
-            green_letters.append(guess[i])
-            green += 1
-        else:
-            green_letters.append("_")
-    green_string = " ".join(green_letters)
-    yellow_string = " ".join(yellow_letters)
-    print(f"Green letters: {green_string}. Yellow letters: {yellow_string}.")
-    return green
-
-#Set up hints
-
-    #Hint lists
+#Hint lists
 hints_list_me = ["Exploring worlds and battling foes from the helm of a stealthy spaceship.","A story where choices ripple across a galaxy, shaping destinies and alliances.","A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe."]
 hints_list_dw = ["An ancient ship that’s bigger on the inside.","Adventures spanning time, space, and everything in between.","Enemies that shout 'Exterminate!' and never stop."]
 hints_list_cr = ["A game where imagination is your greatest weapon.","A party of misfits seeking treasure, glory, and sometimes survival.","Spells, swords, and subterfuge define the adventurers’ path."]
 
+
+
+#Set up number of guesses     
+guesses = 0
+
+#Set up global secret variable
+secret = None
+
+# Create the main window
+main_window = tk.Tk()
+
+
+
+# Functions
+
+#Set up green
+def get_green (secret, guess, word_length):
+    green = 0
+    
+    for i in range(word_length):
+        if guess[i] == secret[i]:
+            green += 1
+    
+    return green
+
+# Quit the game
+def quit_window():
+    main_window.quit()
+
+# Show the rules page 
+def show_rules():
+    main_frame.pack_forget()  # Hide the main frame
+    rules_frame.pack(padx=20, pady=20)  # Show the rules frame
+
+# Go back to the main frame from the Rules frame
+def go_back():
+    rules_frame.pack_forget()  # Hide the rules frame
+    main_frame.pack(padx=20, pady=20)  # Show the main frame
+
+#Show Congratulations Frame
+def show_congratulations():
+    # Dynamically update the congratulation label text
+    congratulation_label_text.config(
+        text=f"Congratulations! You guessed the word {secret} in {guesses} guesses!"
+    )
+    main_frame.pack_forget()  # Hide the main frame
+    game_frame.pack_forget() #Hide the game frame
+    congratulation_frame.pack(padx=20, pady=20)  # Show the rules frame   
+
+# Go to the Game Frame
+def start_game():
+    global secret, guesses, feedback_text, length_of_secret, game_label_word_length, progress, progress_label, yellow_label, yellow_letters
+
+    # Reset game state
+    secret = random.choice(word_list)
+    length_of_secret = len(secret)
+    guesses = 0
+    feedback_text = ""
+    feedback_label.config(text="")  # Clear feedback
+    progress = ["-" for _ in secret] #Keep track of the progress to display it
+    game_frame.pack(padx=20, pady=20)
+    main_frame.pack_forget()
+    yellow_letters = []  #Yellow letters list
+    yellow_label = None  #Label to display yellow letters
+    
+
+    
+    # Show how many letters the word has
+    game_label_word_length = tk.Label(
+        game_frame,
+        text=f"The word has {length_of_secret} letters.",
+        font=("Cooper Black", 18),
+        fg=white,
+        bg=dark_blue,
+        wraplength=450,
+    )
+    game_label_word_length.grid(row=1, column=1, pady = 15)
+
+    # Show progress
+    progress_label = tk.Label(
+        game_frame,
+        text="".join(progress),  # Display the initial progress
+        font=("Berlin Sans", 18),
+        fg="green",
+        bg=white,
+    )
+    progress_label.grid(row=4, column=1, pady = 15)
+
+    #Yellow letters label
+    yellow_label = tk.Label(
+    game_frame,
+    text="",
+    font=("Berlin Sans", 18),
+    fg=white,
+    bg=dark_blue,
+    wraplength=450,
+    )
+    yellow_label.grid(row=5, column=1, pady = 10)
+
+    #This ensures that the enter key can be used to submit the guess
+    guess_entry.focus_set()
+    
+# Submit guess and check it
+def submit_guess():
+    
+    global guesses, feedback_text, length_of_secret
+    guess = guess_entry.get().upper()  # Get the guess from the entry
+    guess_entry.delete(0, tk.END)  # Clear the entry field
+        
+        # Validate the guess                
+    if len(guess) != length_of_secret or not guess.isalpha():
+        feedback_label.config(
+            text=f"Please enter a valid word, {length_of_secret} letters long."
+        )
+        return
+            
+    else:
+        guesses += 1
+        
+        # Get the green count
+        green = get_green(secret, guess,length_of_secret)
+        # Reset yellow letters for this guess
+        yellow_letters = []
+
+        # Track positions already matched as green to avoid marking them as yellow
+        matched_positions = [False] * length_of_secret
+
+        # Update progress with green letters (correct position)
+        for i in range(length_of_secret):
+            if guess[i] == secret[i]:
+                progress[i] = secret[i]  # Reveal correct letter
+                matched_positions[i] = True  # Mark this position as matched
+
+        # Check for yellow letters (correct letter, wrong position)
+        for i in range(length_of_secret):
+            if (
+                guess[i] in secret
+                and guess[i] != secret[i]
+                and not matched_positions[secret.index(guess[i])]
+            ):
+                yellow_letters.append(guess[i])
+
+        # Update the progress label
+        progress_label.config(text="".join(progress))
+
+        # Update the yellow letters label
+        yellow_label.config(text="".join(yellow_letters), fg = "#fcba03", bg = white)
+        
+         
+    # Check if the guess is correct
+    if green == length_of_secret:
+        show_congratulations()
+      
+# Play again
+def play_again():
+    congratulation_frame.pack_forget() #hide congratulation frame
+    game_label_word_length.pack_forget()
+    progress_label.grid_forget()
+    yellow_label.grid_forget()
+
+    #Hint lists reset
+    if not mass_effect:
+        hints_list_me.append("Exploring worlds and battling foes from the helm of a stealthy spaceship.")
+        hints_list_me.append("A story where choices ripple across a galaxy, shaping destinies and alliances.")
+        hints_list_me.append("A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe.")
+    if not doctor_who:
+        hints_list_dw.append("An ancient ship that’s bigger on the inside.")
+        hints_list_dw.append("Adventures spanning time, space, and everything in between.")
+        hints_list_dw.append("Enemies that shout 'Exterminate!' and never stop.")
+    if not critical_role:
+        hints_list_cr.append("A game where imagination is your greatest weapon.")
+        hints_list_cr.append("A party of misfits seeking treasure, glory, and sometimes survival.")
+        hints_list_cr.append("Spells, swords, and subterfuge define the adventurers’ path.")
+    start_game()
+
+#Return to the main frame from the game frame
+def go_to_main_from_game(): 
+    game_label_word_length.pack_forget()
+    progress_label.grid_forget()
+    yellow_label.grid_forget() 
+    game_frame.pack_forget() #Hide game frame
+    main_frame.pack(padx=20, pady=20) #Show the main frame
+
+#Set up hints
 def hints(secret):
+    
     if secret in mass_effect:
 
         if not hints_list_me:
-            print("You've seen all available hints.")
+            feedback_label.config(text=f"You've seen all available hints.")
 
         else:        
             hint_me = random.choice(hints_list_me)
-            print(f"Here's a hint about the universe the word is from: {hint_me}")
+            feedback_label.config(text=f"Here's a hint about the universe the word is from: {hint_me}")
             hints_list_me.remove(hint_me)
 
     elif secret in doctor_who:
         
         if not hints_list_dw:
-            print("You've seen all available hints.")
+            feedback_label.config(text=f"You've seen all available hints.")
 
         else:
             hint_dw = random.choice(hints_list_dw)
-            print(f"Here's a hint about the universe the word is from: {hint_dw}")
+            feedback_label.config(text=f"Here's a hint about the universe the word is from: {hint_dw}")
             hints_list_dw.remove(hint_dw)
                 
     elif secret in critical_role:
                 
         if not hints_list_cr:
-            print("You've seen all available hints.")
+            feedback_label.config(text=f"You've seen all available hints.")
 
         else:
             hint_cr = random.choice(hints_list_cr)
-            print(f"Here's a hint about the universe the word is from: {hint_cr}")
+            feedback_label.config(text=f"Here's a hint about the universe the word is from: {hint_cr}")
             hints_list_cr.remove(hint_cr)
 
-#Set up number of guesses     
-guesses = 0
+# GUI
 
-#Set up funtions for the different word length
+#Main Window settings
+    # Set the title of the window
+main_window.title("Word Game")
 
-def game_three_letters():
-    while True:
-        guess = input("Enter your guess (3-letter word): ").upper()
+    # Set the size of the window
+main_window.geometry("500x700")  # Width x Height
 
-        #Exit the game
-        if guess == "EXIT":
-            print("You quit the game.")
-            break
+    # Disable the window's resizing capability
+main_window.resizable(width=False, height=False)
 
-        #Set up the hints
-        elif guess == "HINT":
-            hints(secret)
-            continue
-        
-        # Validate the guess
-        else:
-            #Make sure guesses variable is accessible
-            global guesses
-            
-            if len(guess) != 3 or not guess.isalpha():
-                print("Please enter a valid 3-digit word.")
-                continue
-        
-            guesses += 1
-        
-        # Get the green count
-        green = get_yellow_and_green(secret, guess,3)
-        
-        
-        
-        # Check if the guess is correct
-        if green == 3:
-            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
-            break
-def game_four_letters():   
-    while True:
-        
-        guess = input("Enter your guess (4-letter word): ").upper()
+    # Change the background color using configure
+main_window.configure(bg= dark_blue)
 
-        #Exit the game
-        if guess == "EXIT":
-            print("You quit the game.")
-            break
+# Main Frame
+main_frame = tk.Frame(main_window, bg=dark_blue)
 
-        #Set up the hints
-        elif guess == "HINT":
-            hints(secret)
-            continue
-        
-        # Validate the guess
-        else:
-            #Make sure guesses variable is accessible
-            global guesses
-            if len(guess) != 4 or not guess.isalpha():
-                print("Please enter a valid 4-digit word.")
-                continue
-        
-            guesses += 1
-        
-        # Get the green count
-        green = get_yellow_and_green(secret, guess,4)
-        
-        
-        
-        # Check if the guess is correct
-        if green == 4:
-            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
-            break
-def game_five_letters():
-    while True:
-    
-        guess = input("Enter your guess (5-letter word): ").upper()
+#Main Window Content
+    # Title
+main_window_title = tk.Label(main_frame, text="Welcome to the Word Game", font=("Cooper Black", 24), fg = white, bg = dark_blue)
+main_window_title.pack(pady=20)  # pady adds some space around the label
 
-        #Exit the game
-        if guess == "EXIT":
-            print("You quit the game.")
-            break
+    # Buttons
 
-        #Set up the hints
-        elif guess == "HINT":
-            hints(secret)
-            continue
-        
-        # Validate the guess
-        else:
-            #Make sure guesses variable is accessible
-            global guesses
-            if len(guess) != 5 or not guess.isalpha() and guess != "HINT":
-                print("Please enter a valid 5-digit word.")
-                continue
-            
-            guesses += 1
-        
-        # Get the green count
-        green = get_yellow_and_green(secret, guess,5)
-        
-        
-        
-        # Check if the guess is correct
-        if green == 5:
-            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
-            break
-def game_six_letters():
-    while True:
-        
-        guess = input("Enter your guess (6-letter word): ").upper()
+start_game_button = tk.Button(main_frame, text="Start Game", font=("Cooper Black", 14), bg = light_blue, command= start_game)
+start_game_button.pack(pady=10)
 
-        #Exit the game
-        if guess == "EXIT":
-            print("You quit the game.")
-            break
+rules_button = tk.Button(main_frame, text="Rules", font=("Cooper Black", 14), bg = light_blue, command= show_rules)
+rules_button.pack(pady=10)
 
-        #Set up the hints
-        elif guess == "HINT":
-            hints(secret)
-            continue
-        
-        # Validate the guess
-        else:
-            #Make sure guesses variable is accessible
-            global guesses
-            if len(guess) != 6 or not guess.isalpha():
-                print("Please enter a valid 6-digit word.")
-                continue
-            
-            guesses += 1
-        
-        # Get the green count
-        green = get_yellow_and_green(secret, guess,6)
-        
-        
-        
-        # Check if the guess is correct
-        if green == 6:
-            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
-            break
-def game_seven_letters():
-    while True:
-        
-        guess = input("Enter your guess (7-letter word): ").upper()
-
-        #Exit the game
-        if guess == "EXIT":
-            print("You quit the game.")
-            break
-
-        #Set up the hints
-        elif guess == "HINT":
-            hints(secret)
-            continue
-        
-        # Validate the guess
-        else:
-            #Make sure guesses variable is accessible
-            global guesses
-            if len(guess) != 7 or not guess.isalpha():
-                print("Please enter a valid 7-digit word.")
-                continue
-            
-            guesses += 1
-        
-        # Get the green count
-        green = get_yellow_and_green(secret, guess,7)
-        
-        
-        
-        # Check if the guess is correct
-        if green == 7:
-            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
-            break
-def game_eight_letters():
-    while True:
-
-        guess = input("Enter your guess (8-letter word): ").upper()
-
-        #Exit the game
-        if guess == "EXIT":
-            print("You quit the game.")
-            break
-
-        #Set up the hints
-        elif guess == "HINT":
-            hints(secret)
-            continue
-        
-        # Validate the guess
-        else:
-            #Make sure guesses variable is accessible
-            global guesses
-            if len(guess) != 8 or not guess.isalpha():
-                print("Please enter a valid 8-digit word.")
-                continue
-            
-            guesses += 1
-        
-        # Get the green count
-        green = get_yellow_and_green(secret, guess,8)
-        
-        
-        
-        # Check if the guess is correct
-        if green == 8:
-            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
-            break
-def game_nine_letters():
-    while True:
-        
-        guess = input("Enter your guess (9-letter word): ").upper()
-
-        #Exit the game
-        if guess == "EXIT":
-            print("You quit the game.")
-            break
-
-        #Set up the hints
-        elif guess == "HINT":
-            hints(secret)
-            continue
-        
-        # Validate the guess
-        else:
-            #Make sure guesses variable is accessible
-            global guesses
-            if len(guess) != 9 or not guess.isalpha():
-                print("Please enter a valid 9-digit word.")
-                continue
-            
-            guesses += 1
-        
-        # Get the green count
-        green = get_yellow_and_green(secret, guess,9)
-        
-        
-        # Check if the guess is correct
-        if green == 9:
-            print(f"Congratulations! You've guessed the word {secret} in {guesses} guesses.")
-            break
+quit_button = tk.Button(main_frame, text="Quit", font=("Cooper Black", 14), bg = light_blue, command = quit_window)
+quit_button.pack(pady=10)
 
 
-#Function to play the game
-def play_the_game():
-    #Choose a random word
-    global secret
-    secret = random.choice(word_list)
 
-    #Set up the number of characters on the secret word
-    length_of_secret = len(secret)
-   
-    #Initial message
-    print("Welcome to the word guessing game!")
-    print("I'll generate a word for you to guess. This word is from either the Mass Effect, Doctor Who or Critical Role/D&D universes.")
-    print("At anytime type 'hint' to get a hint about the word or 'exit' to quit the game.")
-    print("Green means you have a correct letter on the correct place. Yellow means you have a correct letter, but in the wrong place.")
-    
+# Show the main frame initially
+main_frame.pack(padx=20, pady=20)
 
-    if length_of_secret == 3:
-        print("The word has 3 letters.")
-        game_three_letters()
-    
-    elif length_of_secret == 4:
-        print("The word has 4 letters.")
-        game_four_letters()
+# Rules Frame
+rules_frame = tk.Frame(main_window, bg=dark_blue)
 
-    elif length_of_secret == 5:
-        print("The word has 5 letters.")
-        game_five_letters()
+# Rules Frame content
+    #Title
+rules_label_title = tk.Label(
+    rules_frame,
+    text="Rules",
+    font=("Cooper Black", 24),
+    fg=white,
+    bg=dark_blue,
+    wraplength=450,
+)
+rules_label_title.pack(pady=20)
 
-    elif length_of_secret == 6:
-        print("The word has 6 letters.")
-        game_six_letters()
+    #Rule's Text
+rules_label_universe = tk.Label(
+    rules_frame,
+    text="I'll generate a word for you to guess. This word is from either the Mass Effect, Doctor Who or Critical Role/D&D universes.",
+    font=("Arial", 14),
+    fg=white,
+    bg=dark_blue,
+    wraplength=450,
+)
+rules_label_universe.pack(pady=20)
 
-    elif length_of_secret == 7:
-        print("The word has 7 letters.")
-        game_seven_letters()
-    
-    elif length_of_secret == 8:
-        print("The word has 8 letters.")
-        game_eight_letters()
+rules_label_colors = tk.Label(
+    rules_frame,
+    text="Green means you have a correct letter in the correct place. Yellow means you have a correct letter, but in the wrong place.",
+    font=("Arial", 14),
+    fg=white,
+    bg=dark_blue,
+    wraplength=450,
+)
+rules_label_colors.pack(pady=20)
 
-    elif length_of_secret == 9:
-        print("The word has 9 letters.")
-        game_nine_letters()
-
-    else:
-        print("Invalid option. Please try again.")
-        play_the_game()
-    
-    want_to_play_again = input("Type yes to play again:").upper()
-
-    if want_to_play_again == "YES":
-        play_again()
-    else:
-        print("Have a nice day. Closing the game.")
-
-#Function to reset everything if the player wants to play again
-def play_again():
-    #Guesses reset
-    global guesses
-    guesses = 0
-
-    #Hint lists reset
-    if secret in mass_effect:
-        hints_list_me.append("Exploring worlds and battling foes from the helm of a stealthy spaceship.")
-        hints_list_me.append("A story where choices ripple across a galaxy, shaping destinies and alliances.")
-        hints_list_me.append("A saga where diplomacy, loyalty, and sacrifice determine the fate of the universe.")
-    if secret in doctor_who:
-        hints_list_dw.append("An ancient ship that’s bigger on the inside.")
-        hints_list_dw.append("Adventures spanning time, space, and everything in between.")
-        hints_list_dw.append("Enemies that shout 'Exterminate!' and never stop.")
-    if secret in critical_role:
-        hints_list_cr.append("A game where imagination is your greatest weapon.")
-        hints_list_cr.append("A party of misfits seeking treasure, glory, and sometimes survival.")
-        hints_list_cr.append("Spells, swords, and subterfuge define the adventurers’ path.")
-    
-    play_the_game()
+    # Back button in the rules frame
+back_button = tk.Button(rules_frame, text="Back", font=("Cooper Black", 14), bg=light_blue, command=go_back)
+back_button.pack(pady=10)
 
 
+# Game frame settings
+game_frame = tk.Frame(main_window, bg=dark_blue)
+
+    #Title
+game_label_title = tk.Label(
+    game_frame,
+    text="Guess the word!",
+    font=("Cooper Black", 24),
+    fg=white,
+    bg=dark_blue,
+    wraplength=450,
+
+)
+game_label_title.grid(row=0, column=1, pady = 15)
+
+
+    #Guess Input
+guess_entry = tk.Entry(game_frame, font=("Arial", 16), width=20)
+guess_entry.grid(row=2, column=1, pady = 15)
+
+    #Submit guess button
+guess_entry.bind("<Return>", lambda event: submit_guess()) #Submit with "enter"
+submit_button = tk.Button(game_frame, text="Submit", font=("Cooper Black", 14), bg=light_blue, command=submit_guess)
+submit_button.grid(row=3, column=1, pady = 5)
+
+    #Space where the feedback and hints will show
+feedback_label = tk.Label(game_frame, text=" ", font=("Arial", 14), fg=white, bg=dark_blue, wraplength=300, justify="center")
+feedback_label.grid(row=6, column=0, columnspan=3, rowspan=4, pady=10, sticky="ew")
+
+    #Hint button
+hint_button = tk.Button(game_frame, text="Hint", font=("Cooper Black", 14), bg=light_blue, command=lambda: hints(secret))
+hint_button.grid(row=12, column=0, pady=15, padx=5)
+
+    #Back to main menu button
+back_to_main_button = tk.Button(game_frame, text="Main Menu", font=("Cooper Black", 14), bg=light_blue, command=go_to_main_from_game)
+back_to_main_button.grid(row=12, column=1, pady=15, padx=5)
+
+    #Quit button
+quit_from_game = tk.Button(game_frame, text="Quit", font=("Cooper Black", 14), bg=light_blue, command=quit)
+quit_from_game.grid(row=12, column=2, pady=15, padx=5)
+
+
+#Congratulation Frame Settings
+congratulation_frame = tk.Frame(main_window, bg=dark_blue)
+
+    #Title
+congratulation_label_title = tk.Label(
+    congratulation_frame,
+    text="Congratulations!",
+    font=("Cooper Black", 24),
+    fg=white,
+    bg=dark_blue,
+    wraplength=450,
+)
+congratulation_label_title.pack(pady=20)
+
+    #Congratulation text
+congratulation_label_text = tk.Label(
+    congratulation_frame,
+    text=f"You guessed the word {secret} in {guesses} guesses!",
+    font=("Arial", 18),
+    fg=white,
+    bg=dark_blue,
+    wraplength=450,
+)
+congratulation_label_text.pack(pady=20)
+
+    #Play again button
+play_again_button = tk.Button(congratulation_frame, text="Play Again", font=("Cooper Black", 14), bg=light_blue, command=play_again)
+play_again_button.pack(pady=10)
+    #Quit game button
+quit_button = tk.Button(congratulation_frame, text="Quit", font=("Cooper Black", 14), bg = light_blue, command = quit_window)
+quit_button.pack(pady=10)
+
+
+
+
+# Start the Tkinter event loop ( keeps the window open)
+main_window.mainloop()
         
 
-# Start the game
-play_the_game()
+
 
     
 

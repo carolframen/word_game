@@ -67,32 +67,13 @@ main_window = tk.Tk()
 
 # Functions
 
-#Set up yellow and green
-def get_yellow_and_green (secret, guess, word_length):
+#Set up green
+def get_green (secret, guess, word_length):
     green = 0
-
-    green_letters = []
-    yellow_letters = []
-
-    #Check for yellow: correct digit, wrong place
-    for i in range(word_length):
-        if guess[i] != secret[i] and guess[i] in secret:
-            yellow_letters.append(guess[i])
-            
-        else:
-            yellow_letters.append("_")
-
-    #Check for green: correct digit, correct place
     
     for i in range(word_length):
         if guess[i] == secret[i]:
-            green_letters.append(guess[i])
             green += 1
-        else:
-            green_letters.append("_")
-    green_string = " ".join(green_letters)
-    yellow_string = " ".join(yellow_letters)
-    feedback_label.config(text=f"Green letters: {green_string}. Yellow letters: {yellow_string}.")
     
     return green
 
@@ -122,7 +103,7 @@ def show_congratulations():
 
 # Go to the Game Frame
 def start_game():
-    global secret, guesses, feedback_text, length_of_secret, game_label_word_length
+    global secret, guesses, feedback_text, length_of_secret, game_label_word_length, progress, progress_label, yellow_label, yellow_letters
 
     # Reset game state
     secret = random.choice(word_list)
@@ -130,8 +111,11 @@ def start_game():
     guesses = 0
     feedback_text = ""
     feedback_label.config(text="")  # Clear feedback
+    progress = ["-" for _ in secret] #Keep track of the progress to display it
     game_frame.pack(padx=20, pady=20)
     main_frame.pack_forget()
+    yellow_letters = []  #Yellow letters list
+    yellow_label = None  #Label to display yellow letters
     
 
     
@@ -144,7 +128,28 @@ def start_game():
         bg=dark_blue,
         wraplength=450,
     )
-    game_label_word_length.pack(pady=20)
+    game_label_word_length.pack(pady=10)
+
+    # Show progress
+    progress_label = tk.Label(
+        game_frame,
+        text="".join(progress),  # Display the initial progress
+        font=("Berlin Sans", 18),
+        fg="green",
+        bg=white,
+    )
+    progress_label.pack(pady=10)
+
+    #Yellow letters label
+    yellow_label = tk.Label(
+    game_frame,
+    text="",
+    font=("Berlin Sans", 18),
+    fg=white,
+    bg=dark_blue,
+    wraplength=450,
+    )
+    yellow_label.pack(pady=10)
 
     #This ensures that the enter key can be used to submit the guess
     guess_entry.focus_set()
@@ -152,33 +157,60 @@ def start_game():
 # Submit guess and check it
 def submit_guess():
     
+    global guesses, feedback_text, length_of_secret
+    guess = guess_entry.get().upper()  # Get the guess from the entry
+    guess_entry.delete(0, tk.END)  # Clear the entry field
         
-        global guesses, feedback_text, length_of_secret
-        guess = guess_entry.get().upper()  # Get the guess from the entry
-        guess_entry.delete(0, tk.END)  # Clear the entry field
-        
-        # Validate the guess
-
-                    
-        if len(guess) != length_of_secret or not guess.isalpha():
-            feedback_text = "Please enter a valid word, {} letters long.".format(len(secret))
+        # Validate the guess                
+    if len(guess) != length_of_secret or not guess.isalpha():
+        feedback_label.config(
+            text=f"Please enter a valid word, {length_of_secret} letters long."
+        )
+        return
             
-        else:
-            guesses += 1
+    else:
+        guesses += 1
         
-            # Get the green count
-            green = get_yellow_and_green(secret, guess,length_of_secret)
+        # Get the green count
+        green = get_green(secret, guess,length_of_secret)
+        # Reset yellow letters for this guess
+        yellow_letters = []
+
+        # Track positions already matched as green to avoid marking them as yellow
+        matched_positions = [False] * length_of_secret
+
+        # Update progress with green letters (correct position)
+        for i in range(length_of_secret):
+            if guess[i] == secret[i]:
+                progress[i] = secret[i]  # Reveal correct letter
+                matched_positions[i] = True  # Mark this position as matched
+
+        # Check for yellow letters (correct letter, wrong position)
+        for i in range(length_of_secret):
+            if (
+                guess[i] in secret
+                and guess[i] != secret[i]
+                and not matched_positions[secret.index(guess[i])]
+            ):
+                yellow_letters.append(guess[i])
+
+        # Update the progress label
+        progress_label.config(text="".join(progress))
+
+        # Update the yellow letters label
+        yellow_label.config(text="".join(yellow_letters), fg = "#fcba03", bg = white)
         
-        
-        
-        # Check if the guess is correct
-        if green == length_of_secret:
-            show_congratulations()
+         
+    # Check if the guess is correct
+    if green == length_of_secret:
+        show_congratulations()
       
 # Play again
 def play_again():
     congratulation_frame.pack_forget() #hide congratulation frame
     game_label_word_length.pack_forget()
+    progress_label.pack_forget()
+    yellow_label.pack_forget()
 
     #Hint lists reset
     if secret in mass_effect:
@@ -197,7 +229,9 @@ def play_again():
 
 #Return to the main frame from the game frame
 def go_to_main_from_game(): 
-    game_label_word_length.pack_forget() 
+    game_label_word_length.pack_forget()
+    progress_label.pack_forget()
+    yellow_label.pack_forget() 
     game_frame.pack_forget() #Hide game frame
     main_frame.pack(padx=20, pady=20) #Show the main frame
 
@@ -241,10 +275,10 @@ def hints(secret):
 main_window.title("Word Game")
 
     # Set the size of the window
-main_window.geometry("500x600")  # Width x Height
+main_window.geometry("500x700")  # Width x Height
 
     # Disable the window's resizing capability
-main_window.resizable(False, False)
+main_window.resizable(width=False, height=False)
 
     # Change the background color using configure
 main_window.configure(bg= dark_blue)
@@ -254,8 +288,8 @@ main_frame = tk.Frame(main_window, bg=dark_blue)
 
 #Main Window Content
     # Title
-label = tk.Label(main_frame, text="Welcome to the Word Game", font=("Cooper Black", 24), fg = white, bg = dark_blue)
-label.pack(pady=20)  # pady adds some space around the label
+main_window_title = tk.Label(main_frame, text="Welcome to the Word Game", font=("Cooper Black", 24), fg = white, bg = dark_blue)
+main_window_title.pack(pady=20)  # pady adds some space around the label
 
     # Buttons
 
@@ -325,8 +359,9 @@ game_label_title = tk.Label(
     fg=white,
     bg=dark_blue,
     wraplength=450,
+
 )
-game_label_title.pack(pady=20)
+game_label_title.pack(pady=10)
 
 
     #Guess Input
@@ -340,7 +375,7 @@ submit_button.pack(pady=10)
 
     #Space where the feedback and hints will show
 feedback_label = tk.Label(game_frame, text="", font=("Arial", 14), fg=white, bg=dark_blue, wraplength=450, justify="left")
-feedback_label.pack(pady=20)
+feedback_label.pack(pady=10)
 
     #Hint button
 hint_button = tk.Button(game_frame, text="Hint", font=("Cooper Black", 14), bg=light_blue, command=lambda: hints(secret))
@@ -368,7 +403,7 @@ congratulation_label_title.pack(pady=20)
     #Congratulation text
 congratulation_label_text = tk.Label(
     congratulation_frame,
-    text=f"Congratulations! You guessed the word {secret} in {guesses} guesses!",
+    text=f"You guessed the word {secret} in {guesses} guesses!",
     font=("Arial", 18),
     fg=white,
     bg=dark_blue,

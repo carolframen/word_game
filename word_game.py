@@ -26,7 +26,7 @@ three_dw = ["AMY"]
 four_dw = ["ROSE","RORY","JACK","UNIT"]
 five_dw = ["SONIC","SKARO","DONNA","RIVER","CLARA"]
 six_dw = ["TARDIS", "DOCTOR", "DALEKS", "MARTHA", "JUDOON", "ZYGONS", "MASTER","VORTEX"]
-seven_dw = doctor_who = ["PARADOX","BADWOLF","TIMEWAR","WEEPING"]
+seven_dw = ["PARADOX","BADWOLF","TIMEWAR","WEEPING"]
 eight_dw = ["CYBERMEN","TIMELINE","TIMEWARP"]
 nine_dw = ["GALLIFREY","COMPANION","PANDORICA","CHAMELEON","TORCHWOOD"]
 

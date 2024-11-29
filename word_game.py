@@ -386,7 +386,7 @@ back_to_main_button = tk.Button(game_frame, text="Main Menu", font=("Cooper Blac
 back_to_main_button.grid(row=12, column=1, pady=15, padx=5)
 
     #Quit button
-quit_from_game = tk.Button(game_frame, text="Quit", font=("Cooper Black", 14), bg=light_blue, command=quit)
+quit_from_game = tk.Button(game_frame, text="Quit", font=("Cooper Black", 14), bg=light_blue, command=quit_window)
 quit_from_game.grid(row=12, column=2, pady=15, padx=5)
 
 
